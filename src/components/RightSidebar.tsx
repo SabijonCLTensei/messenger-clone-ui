@@ -24,6 +24,9 @@ interface RightSidebarProps {
   // New props for AI interaction mode
   aiInteractionMode: 'web' | 'terminal';
   onSetAiInteractionMode: (mode: 'web' | 'terminal') => void;
+  // New props for user-configured AI port
+  userConfiguredAiPort: number | null;
+  onSetUserConfiguredAiPort: (port: number | null) => void;
 }
 
 // Helper component for grouping settings
@@ -58,6 +61,8 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   onSelectAiModel,
   aiInteractionMode,
   onSetAiInteractionMode,
+  userConfiguredAiPort,
+  onSetUserConfiguredAiPort,
 }) => {
   if (!isVisible) {
     return null;
@@ -207,6 +212,17 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                     </option>
                   ))}
                 </select>
+              </div>
+              {/* AI Port Configuration */}
+              <div className={styles.settingRow}>
+                <span>AI Server Port</span>
+                <input
+                  type="number"
+                  className={styles.aiPortInput}
+                  value={userConfiguredAiPort || ''}
+                  onChange={(e) => onSetUserConfiguredAiPort(e.target.value ? parseInt(e.target.value, 10) : null)}
+                  placeholder="e.g., 5000"
+                />
               </div>
               {/* AI Interaction Mode Selection */}
               <div className={styles.settingRow}>

@@ -110,6 +110,7 @@ const MessengerLayout: React.FC = () => {
   const [availableAiModels] = useState<string[]>(['Qwen 2.5 0.5B', 'gemini-pro', 'gemini-flash']); // Example models - Updated with Qwen
   const [currentAiModel, setCurrentAiModel] = useState<string | null>('Qwen 2.5 0.5B'); // Default AI model - Updated to Qwen
   const [aiInteractionMode, setAiInteractionMode] = useState<'web' | 'terminal'>('web'); // New state for AI interaction mode
+  const [userConfiguredAiPort, setUserConfiguredAiPort] = useState<number | null>(null); // New state for user-configured AI port
 
   useEffect(() => {
     // Apply dark-mode class to body based on theme
@@ -122,9 +123,16 @@ const MessengerLayout: React.FC = () => {
 
   useEffect(() => {
     const fetchPort = async () => {
-      const port = await getAiPort();
-      if (port) {
-        setAiPort(port);
+      let resolvedPort: number | null = null;
+
+      if (userConfiguredAiPort) {
+        resolvedPort = userConfiguredAiPort;
+      } else {
+        resolvedPort = await getAiPort(); // Dynamically read from ai-port.txt
+      }
+
+      if (resolvedPort) {
+        setAiPort(resolvedPort);
         setError(null); // Clear any previous errors
         // Initialize AI chat history
         setChatHistory((prev) => {
@@ -138,11 +146,11 @@ const MessengerLayout: React.FC = () => {
         });
         setSelectedChatId('gemini-ai'); // Select AI chat by default
       } else {
-        setError('Failed to connect to AI server on port 5000. Please ensure `y-ai` is running (e.g., by executing `y-ai` or `bash ~/llama.cpp/AI-Domain/start.sh` in Termux).');
+        setError('Failed to connect to AI server. Please ensure `y-ai` is running, or specify the correct port in settings.');
       }
     };
     fetchPort();
-  }, []);
+  }, [currentTheme, userConfiguredAiPort]); // Re-fetch port if user-configured port changes or theme changes (though theme change doesn't affect port, it's a good practice to include it if related state is in the effect)
 
   const handleEditAvatar = useCallback((chatId: string, newAvatarSrc: string) => {
     setChats((prevChats) =>
@@ -220,8 +228,10 @@ const MessengerLayout: React.FC = () => {
     );
 
     if (currentChat.isAiChat) {
-      if (!aiPort) {
-        setError('AI server is not connected.');
+      // Use the resolved AI port (either user-configured or dynamically fetched)
+      const portToUse = userConfiguredAiPort || aiPort;
+      if (!portToUse) {
+        setError('AI server is not connected. Please ensure `y-ai` is running, or specify the correct port in settings.');
         return;
       }
 
@@ -287,7 +297,7 @@ const MessengerLayout: React.FC = () => {
           role: msg.sender === 'user' ? 'user' : 'model',
           content: msg.text
         })) || [];
-        await getAiChatResponse(aiPromptText, aiPort, onChunk, onFinish, messagesForAI, currentAiModel || undefined);
+        await getAiChatResponse(aiPromptText, portToUse, onChunk, onFinish, messagesForAI, currentAiModel || undefined);
       } catch (err) {
         console.error('Error getting AI response (stream):', err);
         setError(`Error communicating with AI: ${err instanceof Error ? err.message : String(err)}`);
@@ -397,7 +407,7 @@ const MessengerLayout: React.FC = () => {
             <ChatHeader
               avatarSrc={currentChat?.avatarSrc || ""}
               contactName={currentChat?.name || ""}
-              status={currentChat?.isAiChat && aiPort ? "Active now" : currentChat?.isOnline ? "Online" : "Offline"}
+              status={currentChat?.isAiChat && (userConfiguredAiPort || aiPort) ? "Active now" : currentChat?.isOnline ? "Online" : "Offline"}
               onInfoClick={toggleRightSidebar}
               nickname={nickname}
               chatEmoji={chatEmoji}
@@ -448,6 +458,8 @@ const MessengerLayout: React.FC = () => {
         onSelectAiModel={setCurrentAiModel} // Pass AI model setter
         aiInteractionMode={aiInteractionMode} // Pass AI interaction mode
         onSetAiInteractionMode={setAiInteractionMode} // Pass setter for interaction mode
+        userConfiguredAiPort={userConfiguredAiPort} // Pass user-configured AI port
+        onSetUserConfiguredAiPort={setUserConfiguredAiPort} // Pass setter for user-configured AI port
       />
       {isNewMessageModalOpen && (
         <NewMessageModal

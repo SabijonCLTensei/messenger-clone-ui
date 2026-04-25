@@ -1,9 +1,24 @@
 // projects/messenger-clone-ui/src/services/aiService.ts
 
 export async function getAiPort(): Promise<number | null> {
-  // As per README.md, the AI server runs on port 5000.
-  // We're hardcoding this for now, removing dependency on ai-port.txt.
-  return 5000;
+  try {
+    // Fetch the ai-port.txt file from the public directory
+    const response = await fetch('/ai-port.txt');
+    if (!response.ok) {
+      console.error('Failed to fetch AI port:', response.statusText);
+      return null;
+    }
+    const portString = await response.text();
+    const port = parseInt(portString.trim(), 10);
+    if (isNaN(port)) {
+      console.error('Invalid AI port number in ai-port.txt:', portString);
+      return null;
+    }
+    return port;
+  } catch (error) {
+    console.error('Error getting AI port:', error);
+    return null;
+  }
 }
 
 interface AIMessage {
