@@ -1,0 +1,88 @@
+/* Base layout */
+.layoutContainer {
+  display: flex;
+  height: 100vh;
+  font-family: var(--sans); /* Using --sans from index.css */
+}
+
+/* Theme-specific styles */
+.defaultTheme {
+  background-color: var(--messenger-bg);
+  color: var(--messenger-text);
+}
+
+.darkTheme {
+  background-color: var(--messenger-bg);
+  color: var(--messenger-text);
+}
+
+/* Center Chat Area */
+.centerChatArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  transition: all 150ms ease-in-out;
+}
+
+/* Mobile-first responsiveness */
+@media (max-width: 767px) {
+  .hideOnMobile {
+    display: none;
+  }
+
+  .showOnMobileChat {
+    display: flex; /* Or block, depending on desired layout */
+    flex: 1; /* Ensure it takes full width */
+  }
+
+  /* Left Sidebar Wrapper (mobile styles) */
+  .sidebarWrapper {
+    display: none; /* Hidden by default on mobile */
+  }
+  .sidebarWrapper.showSidebarOnMobile {
+    display: flex; /* Show when active on mobile */
+  }
+}
+
+/* Desktop styles (min-width: 768px) */
+@media (min-width: 768px) {
+  .layoutContainer {
+    /* Ensure default flex behavior for desktop */
+    display: flex;
+  }
+
+  /* Left Sidebar Wrapper (desktop styles) */
+  .sidebarWrapper {
+    display: flex !important; /* Always visible on desktop */
+  }
+
+  /* Center Chat Area should always be visible on desktop and take remaining space */
+  .centerChatArea {
+    display: flex;
+    flex: 1;
+    /* Reset any mobile-specific hiding */
+  }
+}
+
+/* Error message styling */
+.errorMessage {
+  padding: 1rem; /* Increased padding */
+  background-color: #fee2e2; /* bg-red-100 */
+  color: #b91c1c; /* text-red-700 */
+  text-align: center;
+  border: 2px solid #b91c1c; /* Stronger border */
+  font-weight: bold; /* Make font bold */
+  margin: 1rem; /* Add some margin around it */
+  border-radius: 0.5rem; /* Slightly rounded corners */
+}
+
+.selectConversationPlaceholder {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25rem;
+  color: #6b7280; /* text-gray-500 */
+  text-align: center;
+  padding: 20px;
+}

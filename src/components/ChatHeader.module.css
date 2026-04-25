@@ -1,0 +1,81 @@
+/* Chat Header container */
+.chatHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem; /* p-4 */
+  background-color: var(--messenger-bg);
+  border-bottom: 1px solid var(--messenger-divider);
+}
+
+/* Back button specific styles */
+.backButton {
+  width: 1.5rem; /* w-6 */
+  height: 1.5rem; /* h-6 */
+  color: var(--messenger-text-secondary);
+  cursor: pointer;
+  margin-right: 0.75rem; /* mr-3 */
+}
+
+/* Hide back button on desktop */
+@media (min-width: 768px) {
+  .backButton {
+    display: none;
+  }
+}
+
+/* Contact information (avatar, name, status) */
+.contactInfo {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 2.5rem; /* w-10 */
+  height: 2.5rem; /* h-10 */
+  border-radius: 9999px; /* rounded-full */
+  object-fit: cover;
+  margin-right: 0.75rem; /* mr-3 */
+}
+
+.nameAndStatus {
+  display: flex;
+  flex-direction: column;
+}
+
+.contactName {
+  font-weight: 600; /* font-semibold */
+  font-size: 1.125rem; /* text-lg */
+  color: var(--messenger-text);
+  display: flex;
+  align-items: center;
+}
+
+.chatEmoji {
+  margin-left: 0.25rem; /* ml-1 */
+  font-size: 1.25rem; /* text-xl */
+}
+
+.status {
+  font-size: 0.875rem; /* text-sm */
+  color: var(--messenger-text-secondary);
+}
+
+/* Action icons (phone, video, info) */
+.actionIcons {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* space-x-4 */
+}
+
+.icon {
+  width: 1.5rem; /* w-6 */
+  height: 1.5rem; /* h-6 */
+  color: var(--messenger-text-secondary);
+  cursor: pointer;
+  transition: color 150ms ease-in-out; /* transition-colors duration-150 */
+}
+
+.icon:hover {
+  color: var(--messenger-text); /* hover:text-messenger-text */
+}
